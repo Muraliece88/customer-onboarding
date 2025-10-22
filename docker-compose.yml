@@ -8,3 +8,59 @@ services:
       MYSQL_PASSWORD: Admin@123
     ports:
       - "3300:3306"
+    networks:
+      - app-network
+  config-server:
+    image: config-server
+    build:
+      context: .
+      dockerfile: config-server/DockerFile
+    ports:
+      - "8888:8888"
+    networks:
+      - app-network
+
+  registry-service:
+    image: registry
+    build:
+      context: .
+      dockerfile: service-registry/DockerFile
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - "8761:8761"
+    networks:
+      - app-network
+
+  notification-service:
+    image: notification
+    build:
+      context: .
+      dockerfile: notification/DockerFile
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - registry-service
+    ports:
+      - "9091:9091"
+    networks:
+      - app-network
+
+  onboarding-service:
+    image: onboarding
+    build:
+      context: .
+      dockerfile: onboarding/DockerFile
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - registry-service
+    ports:
+      - "9092:9092"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
