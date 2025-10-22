@@ -1,0 +1,18 @@
+FROM maven:3.9.11-eclipse-temurin-21 AS build
+
+WORKDIR /app
+
+COPY pom.xml ./
+COPY config-server/pom.xml config-server/
+COPY config-server/src config-server/src
+COPY config-server/src/main/resources config-server/src/main/resources
+
+RUN mvn -f config-server/pom.xml clean package
+
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+
+COPY --from=build /app/config-server/target/config-server-*.jar registry.jar
+EXPOSE 8761
+
+CMD ["java","-jar","registry.jar"]

@@ -1,0 +1,18 @@
+FROM maven:3.9.11-eclipse-temurin-21 AS build
+
+WORKDIR /app
+
+COPY pom.xml ./
+COPY notification/pom.xml notification/
+COPY notification/src notification/src
+COPY notification/src/main/resources notification/src/main/resources
+
+RUN mvn -f notification/pom.xml clean package
+
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+
+COPY --from=build /app/notification/target/notification-*.jar notification.jar
+EXPOSE 8082
+
+CMD ["java","-jar","notification.jar"]

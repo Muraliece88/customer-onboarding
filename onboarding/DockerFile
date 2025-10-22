@@ -1,0 +1,18 @@
+FROM maven:3.9.11-eclipse-temurin-21 AS build
+
+WORKDIR /app
+
+COPY pom.xml ./
+COPY onboarding/pom.xml onboarding/
+COPY onboarding/src onboarding/src
+COPY onboarding/src/main/resources onboarding/src/main/resources
+
+RUN mvn -f onboarding/pom.xml clean package
+
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+
+COPY --from=build /app/onboarding/target/onboarding-*.jar onboarding.jar
+EXPOSE 8082
+
+CMD ["java","-jar","onboarding.jar"]

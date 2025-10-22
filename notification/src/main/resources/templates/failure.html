@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Onboarding Failure</title>
+</head>
+<body>
+<h2>Onboarding Status</h2>
+<p>Dear <span th:text="${userName}">User</span>,</p>
+
+<p>We regret to inform you that we cannot proceed with your onboarding due to the following unmet conditions:</p>
+
+<ul>
+    <li th:each="condition : ${unmetConditions}" th:text="${condition}">Condition goes here</li>
+</ul>
+
+<p>Please review the above and contact support if you believe this is an error.</p>
+
+<p>Regards,<br/>Banking App Team</p>
+</body>
+</html>

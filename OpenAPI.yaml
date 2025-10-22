@@ -1,0 +1,167 @@
+openapi: 3.0.1
+info:
+  title: Customer Onboarding & Notification API
+  version: 1.0.0
+  description: APIs for onboarding customers and sending notifications.
+servers:
+  - url: http://localhost:8081
+    description: Onboarding Service
+  - url: http://localhost:8082
+    description: Notification Service
+paths:
+  /api/v1/customer-onboarding:
+    post:
+      summary: Onboard a new customer
+      tags:
+        - Onboarding
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                onboardRequest:
+                  $ref: '#/components/schemas/OnboardRequest'
+                passport:
+                  type: string
+                  format: binary
+                  description: Passport image file
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              description: URI of the created resource
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationError'
+  /api/v1/notifications/notify:
+    post:
+      summary: Send a notification
+      tags:
+        - Notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+      
+      parameters:
+        - name: X-Correlation-Id
+          in: header
+          required: true
+          schema:
+            type: string
+      
+      
+      responses:
+        '200':
+          description: Notification sent successfully
+          content:
+            application/json:
+              schema:
+                type: string
+        
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationError'
+components:
+  schemas:
+    OnboardRequest:
+      type: object
+      properties:
+        fullName:
+          type: string
+        dateOfBirth:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        gender:
+          type: string
+          enum: [MALE, FEMALE, OTHER]
+        bsnNumber:
+          type: string
+        nationality:
+          type: string
+        address:
+          $ref: '#/components/schemas/AddressRequest'
+    AddressRequest:
+      type: object
+      properties:
+        streetNamne:
+          type: string
+        houseNumber:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+
+    NotificationRequest:
+      type: object
+      properties:
+        emailTemplate:
+          type: string
+        name:
+          type: string
+        loginId:
+          type: string
+        passwrod:
+          type: string
+        recipientEmail:
+          type: string
+        failureReasons:
+          type: object
+    OperationError:
+      type: object
+      properties:
+        code:
+          type: string
+        reasons:
+          type: object
+        timeStamp:
+          type: string
+        message:
+          type: string
+    NotificationError:
+      type: object
+      properties:
+        code:
+          type: string
+        timeStamp:
+          type: string
+        message:
+          type: string
+
+tags:
+  - name: Onboarding
+    description: Customer onboarding operations
+  - name: Notification
+    description: Notification operations
