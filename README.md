@@ -59,8 +59,9 @@ Considering microservice architecture functional packaging is considered so that
 2. Externalised the application properties. So that actuator/refresh can be used to load the properties without having to do deployment
 
 3. Spring security is enabled with different credentials for prod with roles for different endpoint. Roles can also be configured in tables and can be made run time rather than hardcoding
-4. Actuator endpoints are made available to capture health and metrics
-5. Passwords are hardcoded in the code or property file as there is no vault integration done and in real time it can be fetched from secure vaults
+   in real time consider using JWT tokens by integrating with servers like keycloak
+5. Actuator endpoints are made available to capture health and metrics
+6. Passwords are hardcoded in the code or property file as there is no vault integration done and in real time it can be fetched from secure vaults
 
 **TODO/Scope of improvement:**
 
